@@ -59,6 +59,8 @@ SUMMARIZER_MODEL = "sshleifer/distilbart-cnn-12-6"
 
 CHUNK_WORDS = 300         # BART can read ~1024 tokens at once, so long reports are cut into pieces
                           # (smaller pieces = more bullet points, so fewer important facts are lost)
+SUMMARY_MAX_TOKENS = 120  # max length of each piece's summary
+SUMMARY_MIN_TOKENS = 30   # min length of each piece's summary
 
 # ---------------------------------------------------------------------------
 # Finance keyword rule (applied on top of the BiLSTM)
@@ -67,10 +69,11 @@ CHUNK_WORDS = 300         # BART can read ~1024 tokens at once, so long reports 
 # miss obviously bad sentences in a different style. If a sentence contains one
 # of these strongly negative finance words, it is marked "negative".
 NEGATIVE_FINANCE_WORDS = [
-    "net loss", "losses", "impairment", "write-down", "write-off", "downgrade",
+    "net loss", "losses", "(loss)", "impairment", "write-down", "write-off", "downgrade",
     "downgraded", "suspend", "suspended", "breach", "breaching", "waiver",
     "default", "disappointing", "uncertainty", "cancelled", "withdrawn",
     "deteriorat", "challenging", "negative", "squeezed", "below investment grade",
+    "headcount reduction", "layoff", "job cuts", "headwind", "unused capacity",
 ]
 # Costs or debt going UP is bad news (even though "rose" sounds positive),
 # and costs or debt going DOWN is good news.
@@ -79,5 +82,10 @@ UP_WORDS = ["rose", "increased", "higher", "risen", "grew", " up "]
 DOWN_WORDS = ["declined", "decline", "reduced", "reduce", "lower", "fell", "decreased"]
 # words that flip the meaning ("NO indication of impairment", "grew at a SLOWER rate")
 NEGATION_WORDS = [" not ", " no ", "without", "slower"]
-SUMMARY_MAX_TOKENS = 120  # max length of each piece's summary
-SUMMARY_MIN_TOKENS = 30   # min length of each piece's summary
+
+# Forward-looking statements = PROMISES about the future ("we expect", "will improve").
+# Companies always sound optimistic about the future, so when calculating the
+# overall verdict these sentences count only half as much as actual results.
+FORWARD_LOOKING_WORDS = [" will ", " expect", " aim", " plan ", " plans ", " intend",
+                         " forecast", " anticipate", " commitment", " goal"]
+FORWARD_LOOKING_WEIGHT = 0.5

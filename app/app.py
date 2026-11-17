@@ -128,6 +128,8 @@ if st.button("✨ Summarize", type="primary", width="stretch"):
     with st.expander("See how the BiLSTM labelled every sentence"):
         st.dataframe(pd.DataFrame([
             {"label": p["label"], "confidence": round(p["confidence"], 2),
-             "decided by": p["source"], "sentence": p["sentence"]}
+             "decided by": p["source"],
+             "type": "future promise (½ weight)" if p["forward_looking"] else "actual result",
+             "sentence": p["sentence"]}
             for p in result["sentences"]
         ]), width="stretch")

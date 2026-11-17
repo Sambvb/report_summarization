@@ -17,7 +17,7 @@ report summarization/
 │
 ├── data/                         ← ALL DATA
 │   ├── raw/                        downloaded training dataset (Financial PhraseBank), auto-created
-│   └── sample_reports/             example financial reports used in the demo
+│   └── sample_reports/             example reports for the demo: 2 fictional + 2 REAL press releases (NVIDIA, Intel)
 │
 ├── models/                       ← TRAINED MODEL FILES
 │   ├── bilstm_sentiment.pt         learned weights of our BiLSTM (created by the training script)
@@ -121,6 +121,17 @@ The BiLSTM learned from the data that "rose / increased" usually means good news
 - the rule is skipped when the sentence has a negation (*"**no** indication of impairment"*)
 
 In the app you can see, for each sentence, whether it was decided by the "BiLSTM" alone or by "BiLSTM + keyword rule".
+
+### Forward-looking statements count half
+Companies always sound optimistic about the future (*"these actions **will** strengthen our position"*). When the overall verdict is calculated, sentences that are **promises** (*will, expect, aim, plan, forecast...*) count **half** as much as **actual results**. Without this, Intel's Q2 2024 release (a loss, a suspended dividend and 15% job cuts) was wrongly rated "Positive" because of all its optimistic promises.
+
+### Tested on real reports
+| Report | Verdict |
+|---|---|
+| `03_REAL_nvidia_q3_fy2025_record_quarter.txt`: record revenue, +94% YoY | ✅ Positive (+0.90) |
+| `04_REAL_intel_q2_2024_bad_quarter.txt`: loss, dividend suspended, 15% job cuts | ✅ Negative (−0.26) |
+| `01_good_quarter_tech_company.txt` (fictional) | ✅ Positive (+0.59) |
+| `02_bad_year_retail_company.txt` (fictional) | ✅ Negative (−0.66) |
 
 ---
 

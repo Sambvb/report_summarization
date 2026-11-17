@@ -70,16 +70,21 @@ class SentimentAnalyzer:
     def analyze_report(self, text: str, top_k: int = 3) -> dict:
         """Sentence-level predictions + overall verdict for a full report."""
         predictions = self.predict(split_sentences(text))
-        total = max(len(predictions), 1)
 
         counts = {label: 0 for label in config.LABELS}
+        weighted = {"positive": 0.0, "negative": 0.0}
         for p in predictions:
             counts[p["label"]] += 1
+            # promises about the future count less than actual results
+            lower = f" {p['sentence'].lower()} "
+            p["forward_looking"] = any(w in lower for w in config.FORWARD_LOOKING_WORDS)
+            if p["label"] in weighted:
+                weighted[p["label"]] += config.FORWARD_LOOKING_WEIGHT if p["forward_looking"] else 1.0
 
         # Overall score (-1 .. +1): among sentences that carry an opinion (ignore neutral facts),
-        # how many more are positive than negative?
-        opinionated = max(counts["positive"] + counts["negative"], 1)
-        score = (counts["positive"] - counts["negative"]) / opinionated
+        # how much more positive than negative is the report?
+        opinionated = max(weighted["positive"] + weighted["negative"], 1)
+        score = (weighted["positive"] - weighted["negative"]) / opinionated
         if score > 0.20:
             verdict = "Positive - overall the news is GOOD for the company"
         elif score < -0.20:

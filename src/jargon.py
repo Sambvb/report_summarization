@@ -114,6 +114,9 @@ def simplify_summary(bullets: list[str]) -> list[str]:
     """Replace abbreviations (YoY, Q3, bps...) with plain words inside each bullet."""
     simplified = []
     for bullet in bullets:
+        # "modest YoY improvements" -> "modest yearly improvements" (used as an adjective)
+        bullet = re.sub(r"\b(YoY|y-o-y)\s+(?=[a-z])(?!(to|in|and|at|from|on|for|while)\b)",
+                        "yearly ", bullet)
         for short, plain in SHORT_FORMS.items():
             # \b = whole word only, so "FY" won't match inside "FYI"
             bullet = re.sub(rf"\b{re.escape(short)}\b", plain, bullet)
