@@ -1,0 +1,14 @@
+# Libraries needed for the project.  Install with:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+
+torch                    # deep learning framework (BiLSTM + runs BART)
+transformers==4.46.3     # HuggingFace: gives us the pre-trained BART model
+sentencepiece            # text tokenizer used by transformer models
+scikit-learn             # train/test split + accuracy report
+numpy
+pandas                   # tables in the Streamlit app
+matplotlib               # chart in the notebook
+requests                 # downloads the dataset
+streamlit                # the web demo interface
+ipykernel                # lets the Jupyter notebook run inside VS Code
